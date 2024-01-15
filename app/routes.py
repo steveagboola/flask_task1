@@ -50,6 +50,7 @@ def create_task():
     title = data.get('title')
     description = data.get('description')
     due_date = data.get('dueDate') #optional will return none if no dueDate key in request. Not in required field
+    
     # Create the new task withe above values
     new_task = {
         "id": len(tasks_list) + 1,
@@ -58,6 +59,7 @@ def create_task():
         "completed": False,
         "createdAt": datetime.utcnow(),
         "dueDate": due_date
+       
     }
     # Add the new task to the task_list
     tasks_list.append(new_task)
