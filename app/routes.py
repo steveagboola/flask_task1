@@ -1,14 +1,16 @@
 from flask import request
 from datetime import datetime
-from app import app
+from app import app, db
 from fake_data.tasks import tasks_list
+from app.models import Task, User
+
 
 # Checking to see if my route works:  flask --debug run
-@app.route("/")
-def hello_world():
-    first_name = "Steve"
-    last_name = "Agboola"
-    return f'Hello From: {first_name} {last_name}'
+# @app.route("/")
+# def hello_world():
+#     first_name = "Steve"
+#     last_name = "Agboola"
+#     return f'Hello From: {first_name} {last_name}'
 
 # Create a route to get the task form fake_data folder
 @app.route('/tasks')
@@ -61,3 +63,40 @@ def create_task():
     tasks_list.append(new_task)
     return new_task, "201"
 
+#############################################################################################
+
+# Create New User
+@app.route('/users', methods=['POST'])
+def create_user():
+    # Check to see that the request body is JSON
+    if not request.is_json:
+        return {'error': 'Your content-type must be application/json'}, 400
+    
+    # Get the data from the request body
+    data = request.json
+
+    # Validate that the data has all of the required fields
+    required_fields = ['firstName', 'lastName', 'username', 'email', 'password']
+    missing_fields = []
+    for field in required_fields:
+        if field not in data:
+            missing_fields.append(field)
+    if missing_fields:
+        return {'error': f"{', '.join(missing_fields)} must be in the request body"}, 400
+    
+    # Get the values from the data
+    first_name = data.get('firstName')
+    last_name = data.get('lastName')
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    # Check to see if any current users already have that username and/or email
+    check_users = db.session.execute(db.select(User).where( (User.username==username) | (User.email==email) )).scalars().all()
+    # If the list is not empty then someone already has that username or email
+    if check_users:
+        return {'error': 'A user with that username and/or email already exists'}, 400
+
+    # Create a new user instance with the request data which will add it to the database
+    new_user = User(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
+    return new_user.to_dict(), 201
