@@ -7,12 +7,12 @@ from app.auth import basic_auth, token_auth
 
 
 
-# Checking to see if my route works:  flask --debug run
-# @app.route("/")
-# def hello_world():
-#     first_name = "Steve"
-#     last_name = "Agboola"
-#     return f'Hello From: {first_name} {last_name}'
+#Checking to see if my route works:  flask --debug run
+@app.route("/")
+def hello_world():
+    first_name = "Steve"
+    last_name = "Agboola"
+    return f'Hello From: {first_name} {last_name}'
 
 # USER ENDPOINTS 
 @app.route("/token")
