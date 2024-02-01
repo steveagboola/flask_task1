@@ -1,7 +1,7 @@
 from flask import request
 from app import app, db
 from datetime import datetime
-from fake_data.tasks import tasks_list
+# from fake_data.tasks import tasks_list
 from app.models import Task, User
 from app.auth import basic_auth, token_auth
 
